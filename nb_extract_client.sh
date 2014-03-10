@@ -46,7 +46,7 @@ postfile=$PROGPATH/postinstall/usr/local/bin/NBfix.sh
 for type in $client_types; do
     client_variants=`for variant in ${netbackup_clients}/${type}/*; do basename $variant; done`
     for variant in $client_variants; do
-        destdir=`mktemp -d ${dest}/nbu_client_extract.XXX`
+        destdir=`mktemp -d ${dest}/nbu_client_${variant}__XXX`
         echo "=> $variant (output to ${destdir})"
         for p in $nb_packages; do
             name=`echo $p | cut -f1 -d:`

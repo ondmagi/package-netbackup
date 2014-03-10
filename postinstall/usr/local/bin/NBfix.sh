@@ -2,7 +2,7 @@
 
 for f in `find /usr/openv/lib/ /usr/openv/netbackup/bin/ -name '*_new'`; do
 	old_name=$f
-	new_name=`echo $old_name | sed 's/\(_$\)//g'`
+	new_name=`echo $old_name | sed 's/\(_new$\)//g'`
 	echo "Renaming $old_name => $new_name"
 	mv $old_name $new_name
 done

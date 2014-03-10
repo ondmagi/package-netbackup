@@ -102,7 +102,18 @@ for type in $client_types; do
 
                     if [ ! -f "${destdir}/NBfix-1.0-0.noarch.rpm" ]; then
                         echo "Building package NBfix.."
-                        fpm -C "${PROGPATH}/postinstall" -s dir -t rpm -n NBfix -p $destdir/NBfix-1.0-0.noarch.rpm --epoch 1 --iteration 1 -v 1.0 -a noarch -m ${USER} --after-install $postfile --description "Dummy package that fixes NetBackup RPM packages" -d 'SYMCnbclt' -d 'SYMCpddea' -d 'SYMCnbjava' -d 'SYMCnbjre' usr/local/bin/NBfix.sh
+                        fpm -C "${PROGPATH}/postinstall" -s dir -t rpm \
+                            -n NBfix \
+                            -p $destdir/NBfix-1.0-0.noarch.rpm \
+                            --epoch 1 \
+                            --iteration 1 \
+                            -v 1.0 \
+                            -a noarch \
+                            -m ${USER} \
+                            --after-install $postfile \
+                            --description "Dummy package that fixes NetBackup RPM packages" \
+                            -d 'SYMCnbclt' -d 'SYMCpddea' -d 'SYMCnbjava' -d 'SYMCnbjre' \
+                            usr/local/bin/NBfix.sh
                     fi
                     ;;
                 *)

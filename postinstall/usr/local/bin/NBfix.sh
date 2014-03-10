@@ -23,7 +23,7 @@ mv /usr/openv/netbackup/bin/bpcd_new /usr/openv/netbackup/bin/bpcd
 mv /usr/openv/netbackup/bin/vnetd_new /usr/openv/netbackup/bin/vnetd
 if [ ! -f /usr/openv/netbackup/bp.conf ]; then
 	echo "SERVER = foo.abc.com" >> /usr/openv/netbackup/bp.conf
-	echo "CLIENT_NAME = bar.abc.com" >> /usr/openv/netbackup/bp.conf
+	echo "CLIENT_NAME = ${HOSTNAME}" >> /usr/openv/netbackup/bp.conf
 else
 	echo "/usr/openv/netbackup/bp.conf already exists, not overwriting"
 fi

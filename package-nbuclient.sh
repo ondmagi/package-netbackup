@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# nb_extract_client.sh
+# package-nbuclient.sh
 #
 # Script used to extract client packages from a NetBackup Master server.
 #
@@ -12,8 +12,11 @@
 # version: 0.1
 #
 # CHANGES:
-#   Andreas Skarmutsos Lindh 2014-03-07: Restructure to fit local needs
-#   better. Added optional destdir.
+#   Andreas Lindh <andreas@superblock.se> 2014-03-10:
+#       Create NBfix rpm which is a meta package holding post install
+#       scripts etc.
+#   Andreas Lindh <andreas@superblock.se> 2014-03-07:
+#       Restructure to fit local needs better. Added optional destdir.
 #
 
 PATH="/bin:/usr/bin/"

@@ -1,4 +1,13 @@
 #!/bin/bash
+# 
+# NBfix.sh
+#
+# Post installation tasks for NetBackup client
+#
+# Author: Andreas Lindh <andreas@superblock.se>
+# Version: 0.1
+#
+
 bpconf_path=/usr/openv/netbackup/bp.conf
 
 for f in `find /usr/openv/lib/ /usr/openv/netbackup/bin/ -name '*_new'`; do

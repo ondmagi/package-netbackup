@@ -14,8 +14,18 @@ else
 	echo "/usr/openv/netbackup/bp.conf already exists, not overwriting"
 fi
 
-echo "Please have a look at /usr/openv/netbackup/bp.conf and set values"
-echo "accordingly for your environment, after that everything should be setup"
-echo "just fine.."
-echo ""
-echo "Relocating postscript to /usr/local/bin/NBfix.sh for future use"
+if ! grep -q "foo.abc.com" /usr/openv/netbackup/bp.conf; then
+	echo "Please have a look at /usr/openv/netbackup/bp.conf and set values"
+	echo "accordingly for your environment. Afterwards, please start the"
+	echo "NetBackup services by issuing /etc/init.d/netbackup start."
+	echo "You might need to run /etc/init.d/vxpbx_exchanged start"
+	echo ""
+	echo "Relocating postscript to /usr/local/bin/NBfix.sh for future use"
+else
+	echo "Looks like you have already configured /usr/openv/netbackup/bp.conf"
+	echo "Will now try to restart NetBackup & VRTSpbx services"
+	/etc/init.d/netbackup stop
+	/etc/init.d/vxpbx_exchanged stop
+	/etc/init.d/netbackup start
+	/etc/init.d/vxpbx_exchanged start
+fi

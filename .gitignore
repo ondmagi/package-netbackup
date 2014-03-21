@@ -17,5 +17,5 @@ tmp
 _yardoc
 doc/
 
-usr/local/bin/nbuversion
-usr/local/bin/nbubinversion
+postinstall/usr/local/bin/nbuversion
+postinstall/usr/local/bin/nbubinversion

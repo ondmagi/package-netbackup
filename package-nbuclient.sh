@@ -126,6 +126,8 @@ for type in $client_types; do
                             --description "Dummy package that fixes NetBackup RPM packages" \
                             -d 'SYMCnbclt' -d 'SYMCpddea' -d 'SYMCnbjava' -d 'SYMCnbjre' \
                             usr/local/bin/NBfix.sh
+                            usr/local/bin/nbuversion
+                            usr/local/bin/nbubinversion
                     fi
                     ;;
                 *)

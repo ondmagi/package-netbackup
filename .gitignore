@@ -16,3 +16,6 @@ tmp
 .yardoc
 _yardoc
 doc/
+
+usr/local/bin/nbuversion
+usr/local/bin/nbubinversion

@@ -82,6 +82,8 @@ for type in $client_types; do
                     nbtar_version=$nbclt_version
                     nbtar_release=$nbclt_release
                     nbtar_arch=$nbclt_arch
+
+                    version_string="NetBackup-${variant} ${nbclt_version}"
                     
                     if [ -d "${netbackup_clients}/${type}/${variant}" ]; then
                       if [ ! -f "${destdir}/NBtar-${nbtar_version}-${nbtar_release}.${os}.${nbtar_arch}.${package_type}" ]; then
@@ -105,6 +107,13 @@ for type in $client_types; do
 
                     if [ ! -f "${destdir}/NBfix-1.0-0.noarch.rpm" ]; then
                         echo "Building package NBfix.."
+                        
+                        echo "HARDWARE LINUX_SUSE_X86" >> usr/local/bin/nbuversion
+                        echo "VERSION NetBackup ${nbclt_version}" >> usr/local/bin/nbuversion
+
+                        binversion_string="NetBackup-${variant} ${nbclt_version}"
+                        echo $binversion_string >> usr/local/bin/nbubinversion
+
                         fpm -C "${PROGPATH}/postinstall" -s dir -t rpm \
                             -n NBfix \
                             -p $destdir/NBfix-1.0-0.noarch.rpm \

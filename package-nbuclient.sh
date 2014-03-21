@@ -67,9 +67,11 @@ for type in $client_types; do
                     case $variant in
                         SuSE2.6.16)
                             os="sles"
+                            distro="SUSE"
                             ;;
                         RedHat2.6.18)
                             os="el"
+                            distro="REDHAT"
                             ;;
                     esac
                     if [ $name = 'SYMCnbclt' ]; then
@@ -107,12 +109,13 @@ for type in $client_types; do
 
                     if [ ! -f "${destdir}/NBfix-1.0-0.noarch.rpm" ]; then
                         echo "Building package NBfix.."
-                        
-                        echo "HARDWARE LINUX_SUSE_X86" >> usr/local/bin/nbuversion
-                        echo "VERSION NetBackup ${nbclt_version}" >> usr/local/bin/nbuversion
 
-                        binversion_string="NetBackup-${variant} ${nbclt_version}"
-                        echo $binversion_string >> usr/local/bin/nbubinversion
+                        rm -f postinstall/usr/local/bin/nbuversion
+                        echo "HARDWARE LINUX_${distro}_X86" > postinstall/usr/local/bin/nbuversion
+                        echo "VERSION NetBackup ${nbclt_version}" >> postinstall/usr/local/bin/nbuversion
+
+                        rm -f postinstall/usr/local/bin/nbubinversion
+                        echo "NetBackup-${variant} ${nbclt_version}" > postinstall/usr/local/bin/nbubinversion
 
                         fpm -C "${PROGPATH}/postinstall" -s dir -t rpm \
                             -n NBfix \
@@ -125,9 +128,7 @@ for type in $client_types; do
                             --after-install $postfile \
                             --description "Dummy package that fixes NetBackup RPM packages" \
                             -d 'SYMCnbclt' -d 'SYMCpddea' -d 'SYMCnbjava' -d 'SYMCnbjre' \
-                            usr/local/bin/NBfix.sh
-                            usr/local/bin/nbuversion
-                            usr/local/bin/nbubinversion
+                            usr/local/bin/
                     fi
                     ;;
                 *)

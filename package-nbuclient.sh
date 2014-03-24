@@ -99,7 +99,7 @@ for type in $client_types; do
                          --iteration ${nbtar_release} \
                          -a ${nbtar_arch} \
                          -m ${USER} \
-                         --prefix $netbackup_bin \
+                         --prefix ${netbackup_bin} \
                          --description "NetBackup GNU tar" \
                          --epoch $nbtar_release tar
                       fi

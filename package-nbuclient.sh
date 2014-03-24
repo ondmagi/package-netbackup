@@ -86,22 +86,22 @@ for type in $client_types; do
                     nbtar_arch=$nbclt_arch
 
                     version_string="NetBackup-${variant} ${nbclt_version}"
-                    
+                    echo "NETBACKUP_BIN: ${netbackup_bin}"
                     if [ -d "${netbackup_clients}/${type}/${variant}" ]; then
                       if [ ! -f "${destdir}/NBtar-${nbtar_version}-${nbtar_release}.${os}.${nbtar_arch}.${package_type}" ]; then
                         echo "Building package NBtar.."
                         fpm -C "${netbackup_clients}/${type}/${variant}" \
                          -s dir \
-                         -t $package_type \
+                         -t ${package_type} \
                          -n NBtar \
                          -p ${destdir}/NBtar-${nbtar_version}-${nbtar_release}.${os}.${nbtar_arch}.${package_type} \
                          -v $nbtar_version \
                          --iteration ${nbtar_release} \
                          -a ${nbtar_arch} \
                          -m ${USER} \
-                         --prefix ${netbackup_bin} \
+                         --prefix /usr/openv/netbackup/bin \
                          --description "NetBackup GNU tar" \
-                         --epoch $nbtar_release tar
+                         --epoch ${nbtar_release} tar
                       fi
                     else
                         echo "ERROR: Could not find client directory.."
@@ -110,12 +110,13 @@ for type in $client_types; do
                     if [ ! -f "${destdir}/NBfix-1.0-0.noarch.rpm" ]; then
                         echo "Building package NBfix.."
 
-                        rm -f postinstall/usr/local/bin/nbuversion
-                        echo "HARDWARE LINUX_${distro}_X86" > postinstall/usr/local/bin/nbuversion
-                        echo "VERSION NetBackup ${nbclt_version}" >> postinstall/usr/local/bin/nbuversion
+                        rm -f $PROGPATH/postinstall/usr/local/bin/nbuversion
+                        rm -f $PROGPATH/postinstall/usr/local/bin/nbubinversion
 
-                        rm -f postinstall/usr/local/bin/nbubinversion
-                        echo "NetBackup-${variant} ${nbclt_version}" > postinstall/usr/local/bin/nbubinversion
+                        echo "HARDWARE LINUX_${distro}_X86" | tee -a $PROGPATH/postinstall/usr/local/bin/nbuversion
+                        echo "VERSION NetBackup ${nbclt_version}" | tee -a $PROGPATH/postinstall/usr/local/bin/nbuversion
+
+                        echo "NetBackup-${variant} ${nbclt_version}" | tee -a $PROGPATH/postinstall/usr/local/bin/nbubinversion
 
                         fpm -C "${PROGPATH}/postinstall" -s dir -t rpm \
                             -n NBfix \

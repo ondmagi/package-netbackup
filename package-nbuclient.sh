@@ -27,6 +27,10 @@ usage () {
     echo "NetBackup install basepath: /usr/openv/netbackup"
 }
 
+if [ ! -x "fpm" ]; then
+    echo "You must have fpm installed in order to run this script"
+    exit 1
+fi
 
 netbackup_basepath=$1
 [ -z $netbackup_basepath ] && (usage ; exit 1)

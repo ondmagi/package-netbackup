@@ -27,7 +27,9 @@ usage () {
     echo "NetBackup install basepath: /usr/openv/netbackup"
 }
 
-if [ ! -x $(which fpm) ]; then
+FPM=/usr/local/bin/fpm
+
+if [ ! -x $FPM ]; then
     echo "You must have fpm installed in order to run this script"
     exit 1
 fi
@@ -39,6 +41,10 @@ dest=$2
 if [ -z $dest ]; then
   dest=/tmp
 fi
+if [ ! -d "$dest" ]; then
+  echo "$dest is not a directory"
+  exit 1
+fi
 
 netbackup_clients=$netbackup_basepath/client
 netbackup_bin=$netbackup_basepath/bin
@@ -47,13 +53,13 @@ client_types=`for type in $netbackup_clients/*; do basename $type; done`
 
 nb_packages="SYMCnbclt:client_bin.tar.gz SYMCnbjre:JRE.tar.gz SYMCnbjava:NB-Java.tar.gz VRTSpbx:PBX.tar.gz SYMCpddea:pddeagent.tar.gz"
 
-postfile=$PROGPATH/postinstall/usr/local/bin/NBfix.sh
+postfile=postinstall/usr/local/bin/NBfix.sh
 
 # Extracts packages and creates nbtar
 for type in $client_types; do
     client_variants=`for variant in ${netbackup_clients}/${type}/*; do basename $variant; done`
     for variant in $client_variants; do
-        destdir=`mktemp -d ${dest}/nbu_client_${variant}__XXX`
+	destdir=`mktemp -d ${dest}/unpack_XXX`
         echo "=> $variant (output to ${destdir})"
         for p in $nb_packages; do
             name=`echo $p | cut -f1 -d:`
@@ -64,7 +70,7 @@ for type in $client_types; do
                 echo "ERROR: Could not find archive ${archive}.."
                 continue
             fi
-            tar xf "${archive}" -C$destdir
+            tar xf "${archive}" -C ${destdir}
             case $type in
                 Linux)
                     package_type="rpm"
@@ -94,11 +100,11 @@ for type in $client_types; do
                     if [ -d "${netbackup_clients}/${type}/${variant}" ]; then
                       if [ ! -f "${destdir}/NBtar-${nbtar_version}-${nbtar_release}.${os}.${nbtar_arch}.${package_type}" ]; then
                         echo "Building package NBtar.."
-                        fpm -C "${netbackup_clients}/${type}/${variant}" \
+                        $FPM -C "${netbackup_clients}/${type}/${variant}" \
                          -s dir \
                          -t ${package_type} \
                          -n NBtar \
-                         -p ${destdir}/NBtar-${nbtar_version}-${nbtar_release}.${os}.${nbtar_arch}.${package_type} \
+                         -p ${dest}/${type}_${variant}/NBtar-${nbtar_version}-${nbtar_release}.${os}.${nbtar_arch}.${package_type} \
                          -v $nbtar_version \
                          --iteration ${nbtar_release} \
                          -a ${nbtar_arch} \
@@ -114,17 +120,17 @@ for type in $client_types; do
                     if [ ! -f "${destdir}/NBfix-1.0-0.noarch.rpm" ]; then
                         echo "Building package NBfix.."
 
-                        rm -f $PROGPATH/postinstall/usr/local/bin/nbuversion
-                        rm -f $PROGPATH/postinstall/usr/local/bin/nbubinversion
+                        rm -f postinstall/usr/local/bin/nbuversion
+                        rm -f postinstall/usr/local/bin/nbubinversion
 
-                        echo "HARDWARE LINUX_${distro}_X86" | tee -a $PROGPATH/postinstall/usr/local/bin/nbuversion
-                        echo "VERSION NetBackup ${nbclt_version}" | tee -a $PROGPATH/postinstall/usr/local/bin/nbuversion
+                        echo "HARDWARE LINUX_${distro}_X86" | tee -a postinstall/usr/local/bin/nbuversion
+                        echo "VERSION NetBackup ${nbclt_version}" | tee -a postinstall/usr/local/bin/nbuversion
 
-                        echo "NetBackup-${variant} ${nbclt_version}" | tee -a $PROGPATH/postinstall/usr/local/bin/nbubinversion
+                        echo "NetBackup-${variant} ${nbclt_version}" | tee -a postinstall/usr/local/bin/nbubinversion
 
-                        fpm -C "${PROGPATH}/postinstall" -s dir -t rpm \
+                        $FPM -C "postinstall" -s dir -t rpm \
                             -n NBfix \
-                            -p $destdir/NBfix-1.0-0.noarch.rpm \
+                            -p $dest/NBfix-1.0-0.noarch.rpm \
                             --epoch 1 \
                             --iteration 1 \
                             -v 1.0 \

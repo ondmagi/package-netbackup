@@ -137,7 +137,7 @@ for type in $client_types; do
                     fi
                     ;;
                 *)
-                    continue
+                    echo "${type} platform not yet supported by `basename $0`"
                     ;;
             esac
         done

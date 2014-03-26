@@ -118,7 +118,7 @@ for type in $client_types; do
                         echo "ERROR: Could not find client directory.."
                     fi
 
-                    if [ ! -f "${dest}/${type}_${variant}/NBfix-1.0-0.noarch.rpm" ]; then
+                    if [ ! -f "${dest}/${type}_${variant}/NBfix-${nbtar_version}-${nbtar_release}.${os}.noarch.rpm" ]; then
                         echo "Building package NBfix.."
 
                         rm -f $PROGDIR/postinstall/usr/local/bin/nbuversion
@@ -132,10 +132,10 @@ for type in $client_types; do
                         mkdir -p ${dest}/${type}_${variant}
                         $FPM -C "${PROGDIR}/postinstall" -s dir -t rpm \
                             -n NBfix \
-                            -p ${dest}/${type}_${variant}/NBfix-1.0-0.noarch.rpm \
-                            --epoch 1 \
-                            --iteration 1 \
-                            -v 1.0 \
+                            -p ${dest}/${type}_${variant}/NBfix-${nbtar_version}-${nbtar_release}.${os}.noarch.rpm \
+                            --epoch $nbtar_release \
+                            --iteration $nbtar_release \
+                            -v $nbtar_version \
                             -a noarch \
                             -m ${USER} \
                             --after-install $postfile \

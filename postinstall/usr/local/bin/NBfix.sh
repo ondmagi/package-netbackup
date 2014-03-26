@@ -43,6 +43,10 @@ else
 	echo "Will now try to restart NetBackup & VRTSpbx services"
 	/etc/init.d/netbackup stop
 	/etc/init.d/vxpbx_exchanged stop
-	/etc/init.d/netbackup start
+    /usr/openv/netbackup/bin/bp.kill_all
+    pkill -9 vnetd
+    pkill -9 pbx_exchange
+    pkill -9 bpcd
 	/etc/init.d/vxpbx_exchanged start
+	/etc/init.d/netbackup start
 fi

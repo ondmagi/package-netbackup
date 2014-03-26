@@ -27,7 +27,7 @@ usage () {
     echo "NetBackup install basepath: /usr/openv/netbackup"
 }
 
-FPM=/usr/local/bin/fpm
+FPM=$(which fpm)
 
 if [ ! -x $FPM ]; then
     echo "You must have fpm installed in order to run this script"
@@ -42,8 +42,7 @@ if [ -z $dest ]; then
   dest=/tmp
 fi
 if [ ! -d "$dest" ]; then
-  echo "$dest is not a directory"
-  exit 1
+    mkdir -p $dest
 fi
 
 netbackup_clients=$netbackup_basepath/client
@@ -59,18 +58,17 @@ postfile=postinstall/usr/local/bin/NBfix.sh
 for type in $client_types; do
     client_variants=`for variant in ${netbackup_clients}/${type}/*; do basename $variant; done`
     for variant in $client_variants; do
-	destdir=`mktemp -d ${dest}/unpack_XXX`
-        echo "=> $variant (output to ${destdir})"
+        unpackdir=`mktemp -d ${dest}/unpack_XXX`
         for p in $nb_packages; do
             name=`echo $p | cut -f1 -d:`
             targz=`echo $p | cut -f2 -d:`
-            echo "Extracting package ${name}"
+            echo "Extracting package ${name} for ${type}/${variant}"
             archive="${netbackup_clients}/${type}/${variant}/${targz}"
             if [ ! -f "${archive}" ]; then
                 echo "ERROR: Could not find archive ${archive}.."
                 continue
             fi
-            tar xf "${archive}" -C ${destdir}
+            tar xf "${archive}" -C ${unpackdir}
             case $type in
                 Linux)
                     package_type="rpm"
@@ -85,21 +83,21 @@ for type in $client_types; do
                             ;;
                     esac
                     if [ $name = 'SYMCnbclt' ]; then
-                        nbclt_version=`rpm -qp --qf "%{VERSION}" ${destdir}/${name}*.rpm`
-                        nbclt_release=`rpm -qp --qf "%{RELEASE}" ${destdir}/${name}*.rpm`
-                        nbclt_arch=`rpm -qp --qf "%{ARCH}" ${destdir}/${name}*.rpm`
+                        nbclt_version=`rpm -qp --qf "%{VERSION}" ${unpackdir}/${name}*.rpm`
+                        nbclt_release=`rpm -qp --qf "%{RELEASE}" ${unpackdir}/${name}*.rpm`
+                        nbclt_arch=`rpm -qp --qf "%{ARCH}" ${unpackdir}/${name}*.rpm`
                     fi
-                    package_name=`rpm -qp --qf "%{NAME}-%{VERSION}-%{RELEASE}.${os}.%{ARCH}.rpm" ${destdir}/${name}*.rpm`
-                    mv ${destdir}/${name}*.rpm ${destdir}/${package_name}
+                    package_name=`rpm -qp --qf "%{NAME}-%{VERSION}-%{RELEASE}.${os}.%{ARCH}.rpm" ${unpackdir}/${name}*.rpm`
+                    mv ${unpackdir}/${name}*.rpm ${dest}/${type}_${variant}/${package_name}
                     nbtar_version=$nbclt_version
                     nbtar_release=$nbclt_release
                     nbtar_arch=$nbclt_arch
 
                     version_string="NetBackup-${variant} ${nbclt_version}"
-                    echo "NETBACKUP_BIN: ${netbackup_bin}"
                     if [ -d "${netbackup_clients}/${type}/${variant}" ]; then
-                      if [ ! -f "${destdir}/NBtar-${nbtar_version}-${nbtar_release}.${os}.${nbtar_arch}.${package_type}" ]; then
+                      if [ ! -f "${dest}/${type}_${variant}/NBtar-${nbtar_version}-${nbtar_release}.${os}.${nbtar_arch}.${package_type}" ]; then
                         echo "Building package NBtar.."
+                        mkdir -p ${dest}/${type}_${variant}
                         $FPM -C "${netbackup_clients}/${type}/${variant}" \
                          -s dir \
                          -t ${package_type} \
@@ -117,7 +115,7 @@ for type in $client_types; do
                         echo "ERROR: Could not find client directory.."
                     fi
 
-                    if [ ! -f "${destdir}/NBfix-1.0-0.noarch.rpm" ]; then
+                    if [ ! -f "${dest}/${type}_${variant}/NBfix-1.0-0.noarch.rpm" ]; then
                         echo "Building package NBfix.."
 
                         rm -f postinstall/usr/local/bin/nbuversion
@@ -128,9 +126,10 @@ for type in $client_types; do
 
                         echo "NetBackup-${variant} ${nbclt_version}" | tee -a postinstall/usr/local/bin/nbubinversion
 
+                        mkdir -p ${dest}/${type}_${variant}
                         $FPM -C "postinstall" -s dir -t rpm \
                             -n NBfix \
-                            -p $dest/NBfix-1.0-0.noarch.rpm \
+                            -p ${dest}/${type}_${variant}/NBfix-1.0-0.noarch.rpm \
                             --epoch 1 \
                             --iteration 1 \
                             -v 1.0 \
@@ -143,9 +142,10 @@ for type in $client_types; do
                     fi
                     ;;
                 *)
-                    echo "${type} platform not yet supported by `basename $0`"
+                    echo "${type} platform not yet supported by `basename $0`"
                     ;;
             esac
         done
+        rm -fr ${unpackdir}
     done
 done

@@ -21,6 +21,8 @@
 
 PATH="/bin:/usr/bin/"
 PROGPATH=`echo $0 | sed -e 's,[\\/][^\\/][^\\/]*$,,'`
+PROGDIR=`dirname $0`
+echo $PROGDIR
 
 usage () {
     echo "Usage: `basename $0` <nbuinstallpath> [destination]"
@@ -52,7 +54,7 @@ client_types=`for type in $netbackup_clients/*; do basename $type; done`
 
 nb_packages="SYMCnbclt:client_bin.tar.gz SYMCnbjre:JRE.tar.gz SYMCnbjava:NB-Java.tar.gz VRTSpbx:PBX.tar.gz SYMCpddea:pddeagent.tar.gz"
 
-postfile=postinstall/usr/local/bin/NBfix.sh
+postfile=$PROGDIR/postinstall/usr/local/bin/NBfix.sh
 
 # Extracts packages and creates nbtar
 for type in $client_types; do
@@ -69,17 +71,19 @@ for type in $client_types; do
                 continue
             fi
             tar xf "${archive}" -C ${unpackdir}
+            mkdir -p ${dest}/${type}_${variant}
             case $type in
                 Linux)
-                    package_type="rpm"
                     case $variant in
                         SuSE2.6.16)
                             os="sles"
                             distro="SUSE"
+                            package_type="rpm"
                             ;;
                         RedHat2.6.18)
                             os="el"
                             distro="REDHAT"
+                            package_type="rpm"
                             ;;
                     esac
                     if [ $name = 'SYMCnbclt' ]; then
@@ -97,7 +101,6 @@ for type in $client_types; do
                     if [ -d "${netbackup_clients}/${type}/${variant}" ]; then
                       if [ ! -f "${dest}/${type}_${variant}/NBtar-${nbtar_version}-${nbtar_release}.${os}.${nbtar_arch}.${package_type}" ]; then
                         echo "Building package NBtar.."
-                        mkdir -p ${dest}/${type}_${variant}
                         $FPM -C "${netbackup_clients}/${type}/${variant}" \
                          -s dir \
                          -t ${package_type} \
@@ -118,16 +121,16 @@ for type in $client_types; do
                     if [ ! -f "${dest}/${type}_${variant}/NBfix-1.0-0.noarch.rpm" ]; then
                         echo "Building package NBfix.."
 
-                        rm -f postinstall/usr/local/bin/nbuversion
-                        rm -f postinstall/usr/local/bin/nbubinversion
+                        rm -f $PROGDIR/postinstall/usr/local/bin/nbuversion
+                        rm -f $PROGDIR/postinstall/usr/local/bin/nbubinversion
 
-                        echo "HARDWARE LINUX_${distro}_X86" | tee -a postinstall/usr/local/bin/nbuversion
-                        echo "VERSION NetBackup ${nbclt_version}" | tee -a postinstall/usr/local/bin/nbuversion
+                        echo "HARDWARE LINUX_${distro}_X86" | tee -a $PROGDIR/postinstall/usr/local/bin/nbuversion 2>&1
+                        echo "VERSION NetBackup ${nbclt_version}" | tee -a $PROGDIR/postinstall/usr/local/bin/nbuversion 2>&1
 
-                        echo "NetBackup-${variant} ${nbclt_version}" | tee -a postinstall/usr/local/bin/nbubinversion
+                        echo "NetBackup-${variant} ${nbclt_version}" | tee -a $PROGDIR/postinstall/usr/local/bin/nbubinversion 2>&1
 
                         mkdir -p ${dest}/${type}_${variant}
-                        $FPM -C "postinstall" -s dir -t rpm \
+                        $FPM -C "${PROGDIR}/postinstall" -s dir -t rpm \
                             -n NBfix \
                             -p ${dest}/${type}_${variant}/NBfix-1.0-0.noarch.rpm \
                             --epoch 1 \

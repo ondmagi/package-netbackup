@@ -17,6 +17,10 @@ for f in `find /usr/openv/lib/ /usr/openv/netbackup/bin/ -name '*_new'`; do
 	mv $old_name $new_name
 done
 
+# Sort init script
+mv /usr/openv/netbackup/bin/goodies/netbackup /etc/init.d/netbackup
+chmod 755 /etc/init.d/netbackup
+
 if [ ! -f ${bpconf_path} ]; then
 	echo "SERVER = not_configured" >> ${bpconf_path}
 	echo "CLIENT_NAME = ${HOSTNAME}" >> ${bpconf_path}

@@ -18,7 +18,7 @@ for f in `find /usr/openv/lib/ /usr/openv/netbackup/bin/ -name '*_new'`; do
 done
 
 # Sort init script
-mv /usr/openv/netbackup/bin/goodies/netbackup /etc/init.d/netbackup
+cp /usr/openv/netbackup/bin/goodies/netbackup /etc/init.d/netbackup
 chmod 755 /etc/init.d/netbackup
 
 if [ ! -f ${bpconf_path} ]; then
@@ -30,6 +30,10 @@ fi
 
 mv /usr/local/bin/nbubinversion /usr/openv/netbackup/bin/version
 mv /usr/local/bin/nbuversion /usr/openv/netbackup/version
+
+# Copy templates to real files
+cp /usr/openv/netbackup/nblog.conf.template /usr/openv/netbackup/nblog.conf
+cp /usr/openv/netbackup/nblu.conf.template /usr/openv/netbackup/nblu.conf
 
 if grep -q "not_configured" ${bpconf_path}; then
 	echo "Please have a look at ${bpconf_path} and set values"
@@ -50,3 +54,6 @@ else
 	/etc/init.d/vxpbx_exchanged start
 	/etc/init.d/netbackup start
 fi
+
+# Remove self
+rm -f /usr/local/bin/NBfix.sh

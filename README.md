@@ -17,3 +17,12 @@ Scripts to extract and package NetBackup
 ## NBfix
 
 Meta package handling post install tasks. Will set ``CLIENT_NAME`` in ``bp.conf`` to hostname of the server where the package is installed.
+
+## Known limitations
+
+Does __not__ unpack older clients (as in *RedHat2.6*, *SuSE2.6*), however the newer ones listed below works fine at the moment.
+
+Unpackable clients:
+
+* RedHat2.6.18
+* SuSE2.6.16

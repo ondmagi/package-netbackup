@@ -19,17 +19,16 @@
 #       Restructure to fit local needs better. Added optional destdir.
 #
 
-PATH="/bin:/usr/bin/"
+PATH="/bin:/usr/bin/:/usr/local/bin"
 PROGPATH=`echo $0 | sed -e 's,[\\/][^\\/][^\\/]*$,,'`
 PROGDIR=`dirname $0`
-echo $PROGDIR
 
 usage () {
     echo "Usage: `basename $0` <nbuinstallpath> [destination]"
     echo "NetBackup install basepath: /usr/openv/netbackup"
 }
 
-FPM=$(which fpm)
+FPM=`which fpm`
 
 if [ ! -x $FPM ]; then
     echo "You must have fpm installed in order to run this script"
@@ -75,12 +74,12 @@ for type in $client_types; do
             case $type in
                 Linux)
                     case $variant in
-                        SuSE2.6.16)
+                        SuSE*)
                             os="sles"
                             distro="SUSE"
                             package_type="rpm"
                             ;;
-                        RedHat2.6.18)
+                        RedHat*)
                             os="el"
                             distro="REDHAT"
                             package_type="rpm"
@@ -93,20 +92,20 @@ for type in $client_types; do
                     fi
                     package_name=`rpm -qp --qf "%{NAME}-%{VERSION}-%{RELEASE}.${os}.%{ARCH}.rpm" ${unpackdir}/${name}*.rpm`
                     mv ${unpackdir}/${name}*.rpm ${dest}/${type}_${variant}/${package_name}
-                    nbtar_version=$nbclt_version
-                    nbtar_release=$nbclt_release
-                    nbtar_arch=$nbclt_arch
+                    nbtar_version=${nbclt_version}
+                    nbtar_release=${nbclt_release}
+                    nbtar_arch=${nbclt_arch}
 
                     version_string="NetBackup-${variant} ${nbclt_version}"
                     if [ -d "${netbackup_clients}/${type}/${variant}" ]; then
                       if [ ! -f "${dest}/${type}_${variant}/NBtar-${nbtar_version}-${nbtar_release}.${os}.${nbtar_arch}.${package_type}" ]; then
                         echo "Building package NBtar.."
-                        $FPM -C "${netbackup_clients}/${type}/${variant}" \
+                        ${FPM} -C "${netbackup_clients}/${type}/${variant}" \
                          -s dir \
                          -t ${package_type} \
                          -n NBtar \
                          -p ${dest}/${type}_${variant}/NBtar-${nbtar_version}-${nbtar_release}.${os}.${nbtar_arch}.${package_type} \
-                         -v $nbtar_version \
+                         -v ${nbtar_version} \
                          --iteration ${nbtar_release} \
                          -a ${nbtar_arch} \
                          -m ${USER} \
@@ -130,12 +129,12 @@ for type in $client_types; do
                         echo "NetBackup-${variant} ${nbclt_version}" | tee -a $PROGDIR/postinstall/usr/local/bin/nbubinversion 2>&1
 
                         mkdir -p ${dest}/${type}_${variant}
-                        $FPM -C "${PROGDIR}/postinstall" -s dir -t rpm \
+                        ${FPM} -C "${PROGDIR}/postinstall" -s dir -t rpm \
                             -n NBfix \
                             -p ${dest}/${type}_${variant}/NBfix-${nbtar_version}-${nbtar_release}.${os}.noarch.rpm \
-                            --epoch $nbtar_release \
-                            --iteration $nbtar_release \
-                            -v $nbtar_version \
+                            --epoch ${nbtar_release} \
+                            --iteration ${nbtar_release} \
+                            -v ${nbtar_version} \
                             -a noarch \
                             -m ${USER} \
                             --after-install $postfile \

@@ -22,7 +22,7 @@ Meta package handling post install tasks. Will set ``CLIENT_NAME`` in ``bp.conf`
 
 Does __not__ unpack older clients (as in *RedHat2.6*, *SuSE2.6*), however the newer ones listed below works fine at the moment.
 
-Unpackable clients:
+Extractable (tested) clients:
 
 * RedHat2.6.18
 * SuSE2.6.16

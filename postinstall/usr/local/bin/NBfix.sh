@@ -1,5 +1,5 @@
 #!/bin/bash
-# 
+#
 # NBfix.sh
 #
 # Post installation tasks for NetBackup client

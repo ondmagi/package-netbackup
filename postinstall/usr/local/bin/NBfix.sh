@@ -31,7 +31,7 @@ fi
 mv /usr/local/bin/nbubinversion /usr/openv/netbackup/bin/version
 mv /usr/local/bin/nbuversion /usr/openv/netbackup/version
 
-if ! grep -q "not_configured" ${bpconf_path}; then
+if grep -q "not_configured" ${bpconf_path}; then
 	echo "Please have a look at ${bpconf_path} and set values"
 	echo "accordingly for your environment. Afterwards, please start the"
 	echo "NetBackup services by issuing /etc/init.d/netbackup start."

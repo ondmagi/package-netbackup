@@ -8,6 +8,7 @@ Scripts to extract and package NetBackup
 
 * fpm (gem install fpm, requires ruby)
 * rpm
+* rpmbuild
 
 ## How?
 

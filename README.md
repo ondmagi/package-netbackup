@@ -11,7 +11,7 @@ Scripts to extract and package NetBackup
 
 ## How?
 
-1. ``./package-nbuclient.sh /usr/openv/netbackup/client [output path (default: /tmp)]``. This will generate generic packages.
+1. ``./package-nbuclient.sh /usr/openv/netbackup [output path (default: /tmp)]``. This will generate generic packages.
 2. Make sure to edit /usr/openv/netbackup/bp.conf accordingly (probably just change the server section)
 
 ## NBfix

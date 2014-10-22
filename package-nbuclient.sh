@@ -65,7 +65,7 @@ postfile=$PROGDIR/postinstall/usr/local/bin/NBfix.sh
 for type in $client_types; do
     #client_variants=`for variant in ${netbackup_clients}/${type}/*; do basename $variant; done`
     # ONLY SUPPORTED VARIANTS FOR NOW
-    client_variants="RedHat2.6 RedHat2.6.18 SuSE2.6 SuSE2.6.16"
+    client_variants="RedHat2.6.18 SuSE2.6.16"
 
     for variant in $client_variants; do
         unpackdir=`mktemp -d ${dest}/unpack_XXX`

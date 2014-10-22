@@ -36,7 +36,10 @@ if [ ! -x $FPM ]; then
 fi
 
 netbackup_basepath=$1
-[ -z $netbackup_basepath ] && (usage ; exit 1)
+if [ -z "$netbackup_basepath" ]; then
+    usage
+    exit 1
+fi
 
 dest=$2
 if [ -z $dest ]; then

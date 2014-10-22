@@ -52,7 +52,10 @@ fi
 netbackup_clients=$netbackup_basepath/client
 netbackup_bin=$netbackup_basepath/bin
 
-client_types=`for type in $netbackup_clients/*; do basename $type; done`
+# ONLY SUPPORTED TYPES FOR NOW
+#client_types=`for type in $netbackup_clients/*; do basename $type; done`
+client_types="Linux"
+
 
 nb_packages="SYMCnbclt:client_bin.tar.gz SYMCnbjre:JRE.tar.gz SYMCnbjava:NB-Java.tar.gz VRTSpbx:PBX.tar.gz SYMCpddea:pddeagent.tar.gz"
 
@@ -60,7 +63,10 @@ postfile=$PROGDIR/postinstall/usr/local/bin/NBfix.sh
 
 # Extracts packages and creates nbtar
 for type in $client_types; do
-    client_variants=`for variant in ${netbackup_clients}/${type}/*; do basename $variant; done`
+    #client_variants=`for variant in ${netbackup_clients}/${type}/*; do basename $variant; done`
+    # ONLY SUPPORTED VARIANTS FOR NOW
+    client_variants="RedHat2.6 RedHat2.6.18 SuSE2.6 SuSE2.6.16"
+
     for variant in $client_variants; do
         unpackdir=`mktemp -d ${dest}/unpack_XXX`
         for p in $nb_packages; do

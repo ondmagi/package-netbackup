@@ -19,7 +19,7 @@
 #       Restructure to fit local needs better. Added optional destdir.
 #
 
-PATH="/bin:/usr/bin/:/usr/local/bin"
+PATH="$PATH:/bin:/usr/bin/:/usr/local/bin"
 PROGPATH=`echo $0 | sed -e 's,[\\/][^\\/][^\\/]*$,,'`
 PROGDIR=`dirname $0`
 
